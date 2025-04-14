@@ -26,8 +26,8 @@ local IsKeyHeld = false
 local Triggerbot = {
     Settings = {
         Enabled = false,
-        Delay = 0.00000000000001,
-        Keybind = Enum.KeyCode.G,
+        Delay = 0.1,
+        Keybind = Enum.KeyCode.T,
         Mode = "Toggle", -- Options: "Toggle" or "Hold"
     },
 }
@@ -42,7 +42,24 @@ Circle.Radius = 150
 Circle.NumSides = Circle.Radius * 100
 Circle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
 
---// Functions \\--
+--// Notification Function \\--
+local function Notify(title, message, duration)
+    local Notification = Instance.new("TextLabel")
+    Notification.Size = UDim2.new(0, 300, 0, 50)
+    Notification.Position = UDim2.new(0.5, -150, 0.1, 0)
+    Notification.BackgroundTransparency = 0.5
+    Notification.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Notification.TextSize = 20
+    Notification.Text = title .. "\n" .. message
+    Notification.Parent = LocalGui
+
+    task.wait(duration)
+
+    Notification:TweenPosition(UDim2.new(0.5, -150, 0, -50), "Out", "Sine", 0.5)
+    task.wait(0.5)
+    Notification:Destroy()
+end
 
 --// LocalPlayer | CharacterAdded \\--
 LocalPlayer.CharacterAdded:Connect(function(Character)
@@ -168,6 +185,9 @@ RunService.Heartbeat:Connect(function()
                     Tool:Activate()
                     task.wait(0.1)
                     Tool:Deactivate()
+
+                    -- Notify user when tool is activated
+                    Notify("Triggerbot", "Tool Activated!", 3)
                 end
             end
             LastActivationTime = tick()
