@@ -1,5 +1,17 @@
 --// Happy skidding \\--
 
+-- Define the global config
+getgenv().Config = {
+    Triggerbot = {
+        Settings = {
+            Enabled = false,
+            Delay = 0.1,
+            Keybind = Enum.KeyCode.T,
+            Mode = "Toggle", -- Options: "Toggle" or "Hold"
+        }
+    }
+}
+
 local GameReference = cloneref(Game)
 
 if not GameReference:IsLoaded() then GameReference.Loaded:Wait() end
@@ -23,14 +35,7 @@ local LastActivationTime = tick()
 local IsKeyHeld = false
 
 --// Triggerbot Settings \\--
-local Triggerbot = {
-    Settings = {
-        Enabled = false,
-        Delay = 0.1,
-        Keybind = Enum.KeyCode.T,
-        Mode = "Toggle", -- Options: "Toggle" or "Hold"
-    },
-}
+local Triggerbot = getgenv().Config.Triggerbot  -- Accessing the global config
 
 --// Circle \\--
 local Circle = Drawing.new("Circle")
@@ -42,24 +47,7 @@ Circle.Radius = 150
 Circle.NumSides = Circle.Radius * 100
 Circle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
 
---// Notification Function \\--
-local function Notify(title, message, duration)
-    local Notification = Instance.new("TextLabel")
-    Notification.Size = UDim2.new(0, 300, 0, 50)
-    Notification.Position = UDim2.new(0.5, -150, 0.1, 0)
-    Notification.BackgroundTransparency = 0.5
-    Notification.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Notification.TextSize = 20
-    Notification.Text = title .. "\n" .. message
-    Notification.Parent = LocalGui
-
-    task.wait(duration)
-
-    Notification:TweenPosition(UDim2.new(0.5, -150, 0, -50), "Out", "Sine", 0.5)
-    task.wait(0.5)
-    Notification:Destroy()
-end
+--// Functions \\--
 
 --// LocalPlayer | CharacterAdded \\--
 LocalPlayer.CharacterAdded:Connect(function(Character)
@@ -185,9 +173,6 @@ RunService.Heartbeat:Connect(function()
                     Tool:Activate()
                     task.wait(0.1)
                     Tool:Deactivate()
-
-                    -- Notify user when tool is activated
-                    Notify("Triggerbot", "Tool Activated!", 3)
                 end
             end
             LastActivationTime = tick()
